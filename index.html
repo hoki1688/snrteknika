@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <title>Analisis Teknikal</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
 </head>
 <body class="p-4 bg-light">
   <div class="container">
     <h2 class="mb-4">📈 Analisis Teknikal Saham</h2>
-    <table class="table table-bordered table-striped" id="analisisTable">
+    <table class="table table-bordered table-striped table-sm" id="analisisTable">
       <thead class="table-dark">
         <tr>
           <th>Saham</th>
@@ -29,22 +30,25 @@
   <script>
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhv9xN2fQaRHCmXo-4rmYievfieCwHUM2D0ke7ByDK-QEWo6dzNIF3mPx8Uhlgg9dM1dQxR5ZglwDN/pub?gid=608402992&single=true&output=csv";
 
-    fetch(csvUrl)
-      .then(res => res.text())
-      .then(text => {
-        const rows = text.trim().split("\n").slice(1); // skip header
+    Papa.parse(csvUrl, {
+      download: true,
+      header: false,
+      skipEmptyLines: true,
+      complete: function (results) {
         const tbody = document.querySelector("#analisisTable tbody");
-        rows.forEach(row => {
-          const cols = row.split(",");
+        const rows = results.data.slice(1); // skip header
+
+        rows.forEach(cols => {
           const tr = document.createElement("tr");
-          cols.forEach(c => {
+          cols.forEach(col => {
             const td = document.createElement("td");
-            td.textContent = c;
+            td.textContent = col;
             tr.appendChild(td);
           });
           tbody.appendChild(tr);
         });
-      });
+      }
+    });
   </script>
 </body>
 </html>
